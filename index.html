@@ -13,9 +13,9 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); /* 添加渐变背景 */
     }
     body {
-     
       background-size: cover;
       display: flex;
       justify-content: center;
@@ -29,7 +29,7 @@
     .chat-container {
       position: absolute;
       width: fit-content;
-      max-width: 55%;
+      max-width: 45%; /* 稍微减小卡片宽度，让布局更宽松 */
       opacity: 0;
       transform: translate(-50%, -50%) scale(0.7);
       animation: spreadIn 0.7s forwards cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -153,8 +153,6 @@
       "姐姐，不管遇到什么事，我永远站在你这边",
       "姐姐，你的鼓励是我前进的最大动力",
       "浩东收到了姐姐的红包，很是开心"
-      
-      
     ];
 
     const colors = [
@@ -165,7 +163,7 @@
     const cardCount = 66;
     const container = document.getElementById("cardContainer");
 
-    // 核心优化：大幅扩大上方和下方的纵向范围
+    // 优化分布算法 - 让卡片更加分散
     for (let i = 0; i < cardCount; i++) {
       setTimeout(() => {
         const text = winterTexts[i];
@@ -173,32 +171,44 @@
         const zIndex = Math.floor(Math.random() * 66) + 1;
         let spreadX, spreadY;
 
+        // 获取屏幕宽高，用于计算分布范围
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        
+        // 计算最大偏移量，基于屏幕尺寸
+        const maxSpreadX = screenWidth * 0.8; // 水平方向最大偏移屏幕宽度的80%
+        const maxSpreadY = screenHeight * 0.8; // 垂直方向最大偏移屏幕高度的80%
+
         const random = Math.random();
         if (random < 0.2) {
-          // 中心层（20%）：±0~50px
-          spreadX = Math.floor(Math.random() * 50) - 25;
-          spreadY = Math.floor(Math.random() * 50) - 25;
+          // 中心层（20%）：±0~100px
+          spreadX = Math.floor(Math.random() * 100) - 50;
+          spreadY = Math.floor(Math.random() * 100) - 50;
         } else if (random < 0.4) {
-          // 中等层（20%）：±50~100px
-          spreadX = Math.floor(Math.random() * 50) + 50;
-          spreadY = Math.floor(Math.random() * 50) + 50;
+          // 中等层（20%）：±100~200px
+          spreadX = Math.floor(Math.random() * 100) + 100;
+          spreadY = Math.floor(Math.random() * 100) + 100;
           spreadX = Math.random() > 0.5 ? spreadX : -spreadX;
           spreadY = Math.random() > 0.5 ? spreadY : -spreadY;
         } else if (random < 0.6) {
-          // 边缘层（20%）：±100~180px
-          spreadX = Math.floor(Math.random() * 80) + 100;
-          spreadY = Math.floor(Math.random() * 80) + 50;
+          // 边缘层（20%）：±200~350px
+          spreadX = Math.floor(Math.random() * 150) + 200;
+          spreadY = Math.floor(Math.random() * 150) + 200;
           spreadX = Math.random() > 0.5 ? spreadX : -spreadX;
           spreadY = Math.random() > 0.5 ? spreadY : -spreadY;
         } else if (random < 0.8) {
-          // 上方层（20%）：扩大到纵向-150~-250px（贴近屏幕顶部边缘）
-          spreadX = Math.floor(Math.random() * 120) - 60;
-          spreadY = -(Math.floor(Math.random() * 100) + 150);
+          // 上方层（20%）：扩大到纵向-250~-450px
+          spreadX = Math.floor(Math.random() * 200) - 100;
+          spreadY = -(Math.floor(Math.random() * 200) + 250);
         } else {
-          // 下方层（20%）：扩大到纵向150~250px（贴近屏幕底部边缘）
-          spreadX = Math.floor(Math.random() * 120) - 60;
-          spreadY = Math.floor(Math.random() * 100) + 150;
+          // 下方层（20%）：扩大到纵向250~450px
+          spreadX = Math.floor(Math.random() * 200) - 100;
+          spreadY = Math.floor(Math.random() * 200) + 250;
         }
+
+        // 确保不会超出屏幕太多
+        spreadX = Math.max(-maxSpreadX, Math.min(maxSpreadX, spreadX));
+        spreadY = Math.max(-maxSpreadY, Math.min(maxSpreadY, spreadY));
 
         const cardDiv = document.createElement("div");
         cardDiv.className = "chat-container";
@@ -210,7 +220,6 @@
         cardDiv.innerHTML = `
           <div class="chat-card" style="background: ${color}">
             <div class="chat-header">
-              
               <span>浩东的话</span>
             </div>
             ${text}
