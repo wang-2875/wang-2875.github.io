@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>姐姐</title>
+  <style>
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    body {
+     
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #cardContainer {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .chat-container {
+      position: absolute;
+      width: fit-content;
+      max-width: 55%;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.7);
+      animation: spreadIn 0.7s forwards cubic-bezier(0.34, 1.56, 0.64, 1);
+      left: 50%;
+      top: 50%;
+    }
+    .chat-card {
+      background: var(--color);
+      border-radius: 16px;
+      padding: 9px 13px;
+      font-size: 13px;
+      line-height: 1.4;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      position: relative;
+      z-index: var(--z-index);
+      transition: transform 0.2s ease;
+    }
+    .chat-card:hover {
+      transform: scale(1.08);
+      z-index: 999;
+    }
+    .chat-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 3px;
+      font-size: 10px;
+      color: #666;
+    }
+    .chat-header img {
+      width: 17px;
+      height: 17px;
+      margin-right: 3px;
+    }
+    @keyframes spreadIn {
+      to {
+        opacity: 1;
+        transform: translate(calc(-50% + var(--spread-x)), calc(-50% + var(--spread-y))) scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="cardContainer"></div>
+
+  <script>
+    document.addEventListener('click', () => {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) elem.requestFullscreen();
+      else if (elem.mozRequestFullScreen) elem.mozRequestFullScreen();
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    });
+
+    const winterTexts = [
+      "姐姐，冬天降温记得多穿件衣服，别冻着啦",
+      "姐姐要按时喝热水，手脚冰凉就多泡泡脚呀",
+      "冬日的风好冷，姐姐出门一定要戴围巾和手套呀",
+      "姐姐，晚上睡觉记得盖好被子，别踢被子啦",
+      "冬天容易干燥，姐姐要记得涂护手霜和唇膏呀",
+      "姐姐，要不要我给你寄点暖宝宝，贴在身上暖暖的",
+      "天冷了，姐姐多吃点热乎的，比如火锅、热汤面",
+      "姐姐，降温了就少出门，在家待着更舒服呀",
+      "冬天的阳光好珍贵，姐姐有空多晒晒太阳补补钙",
+      "姐姐，要不要一起喝杯热奶茶，暖手又暖心",
+      "姐姐，记得多吃点水果，补充维生素，少生病",
+      "天冷了，姐姐别熬夜啦，早点休息对身体好",
+      "姐姐，我给你买了件羽绒服，已经寄过去啦",
+      "冬天开车要慢一点，姐姐注意交通安全呀",
+      "姐姐，办公室可以备个小毛毯，冷了就披上",
+      "姐姐，要是觉得冷，就多运动运动，促进血液循环",
+      "冬日里，姐姐一定要照顾好自己，我会担心你的",
+      "姐姐，要不要一起去泡温泉，放松一下还能暖身子",
+      "姐姐，你就像冬日里的小太阳，总能温暖我",
+      "姐姐穿羽绒服也好好看，气质拿捏得死死的",
+      "姐姐也太会照顾人了，比冬天的暖炉还贴心",
+      "不管什么时候，姐姐都是我心里最靠谱的人",
+      "姐姐的笑容好治愈，再冷的冬天看到都觉得暖",
+      "姐姐不仅长得好看，心地还这么善良，太完美啦",
+      "姐姐处理事情总是那么冷静，我要向你学习",
+      "有姐姐在身边，冬天都觉得不那么冷了",
+      "姐姐的厨艺也太好了吧，冬天能吃到你做的饭太幸福了",
+      "姐姐对我真好，什么好东西都想着我",
+      "姐姐的眼光真好，选的衣服、饰品都超好看",
+      "姐姐就是我的榜样，不管是工作还是生活都很优秀",
+      "姐姐说话温温柔柔的，听着就很舒服",
+      "姐姐真的好厉害，什么难题都能解决",
+      "有这样的姐姐，我真的太幸运了",
+      "姐姐即使素颜也超美，天生丽质呀",
+      "姐姐总是那么乐观，能感染身边的每个人",
+      "姐姐对家人真的很用心，是我们家的小棉袄",
+      "姐姐，这个冬天我们一定要约一次火锅呀",
+      "好久没见姐姐了，好想你，有空聚聚吧",
+      "姐姐，周末要不要来我家，我给你做你爱吃的菜",
+      "冬天的晚上，和姐姐一起窝在沙发上看剧太幸福了",
+      "姐姐，我们一起去看初雪吧，一定很浪漫",
+      "记得小时候，冬天姐姐总把我的手揣进她的口袋里",
+      "姐姐，有空我们一起去逛街，给你买件新衣服",
+      "不管走多远，姐姐都是我最牵挂的人",
+      "姐姐，遇到不开心的事一定要告诉我，我陪着你",
+      "这个冬天，有姐姐的陪伴，一点都不孤单",
+      "姐姐，我们一起去滑雪吧，体验一下冬日的快乐",
+      "每次和姐姐聊天，都觉得很安心",
+      "姐姐，我想你了，什么时候能见面呀",
+      "小时候姐姐总保护我，现在换我保护姐姐",
+      "和姐姐在一起的时光，总是那么开心",
+      "祝姐姐这个冬天，温暖相伴，好运连连",
+      "愿姐姐冬日安康，万事顺意，天天开心",
+      "希望姐姐这个冬天，爱与被爱，满心欢喜",
+      "祝姐姐工作顺利，身体健康，冬日无忧",
+      "愿姐姐的冬天，有暖阳相伴，有好友相随",
+      "祝姐姐越来越美，越来越优秀，一切都好",
+      "希望姐姐这个冬天，收获满满，幸福多多",
+      "愿姐姐被世界温柔以待，冬日不冷，心中有暖",
+      "祝姐姐财运亨通，事事如意，冬日吉祥",
+      "愿姐姐的生活像冬日的阳光一样，温暖明亮",
+      "祝姐姐和家人身体健康，平安喜乐，冬日安康",
+      "希望姐姐这个冬天，能遇到所有美好的事情",
+      "愿姐姐每天都有好心情，烦恼都随风而去",
+      "祝姐姐美梦成真，心想事成，冬日顺遂",
+      "愿姐姐永远年轻漂亮，幸福美满，一生无忧",
+      "姐姐，你是我生命中最珍贵的人",
+      "姐姐，不管遇到什么事，我永远站在你这边",
+      "姐姐，你的鼓励是我前进的最大动力",
+      "姐姐，希望你永远被幸福包围，不缺爱也不缺温暖"
+    ];
+
+    const colors = [
+      "#f0f9ff", "#fef2f2", "#f9f7fe", "#fffbeb", "#f0fdf4",
+      "#eff6ff", "#fff2f2", "#fef3f2", "#f5f5f4", "#f0f9ff"
+    ];
+
+    const cardCount = 66;
+    const container = document.getElementById("cardContainer");
+
+    // 核心优化：大幅扩大上方和下方的纵向范围
+    for (let i = 0; i < cardCount; i++) {
+      setTimeout(() => {
+        const text = winterTexts[i];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const zIndex = Math.floor(Math.random() * 66) + 1;
+        let spreadX, spreadY;
+
+        const random = Math.random();
+        if (random < 0.2) {
+          // 中心层（20%）：±0~50px
+          spreadX = Math.floor(Math.random() * 50) - 25;
+          spreadY = Math.floor(Math.random() * 50) - 25;
+        } else if (random < 0.4) {
+          // 中等层（20%）：±50~100px
+          spreadX = Math.floor(Math.random() * 50) + 50;
+          spreadY = Math.floor(Math.random() * 50) + 50;
+          spreadX = Math.random() > 0.5 ? spreadX : -spreadX;
+          spreadY = Math.random() > 0.5 ? spreadY : -spreadY;
+        } else if (random < 0.6) {
+          // 边缘层（20%）：±100~180px
+          spreadX = Math.floor(Math.random() * 80) + 100;
+          spreadY = Math.floor(Math.random() * 80) + 50;
+          spreadX = Math.random() > 0.5 ? spreadX : -spreadX;
+          spreadY = Math.random() > 0.5 ? spreadY : -spreadY;
+        } else if (random < 0.8) {
+          // 上方层（20%）：扩大到纵向-150~-250px（贴近屏幕顶部边缘）
+          spreadX = Math.floor(Math.random() * 120) - 60;
+          spreadY = -(Math.floor(Math.random() * 100) + 150);
+        } else {
+          // 下方层（20%）：扩大到纵向150~250px（贴近屏幕底部边缘）
+          spreadX = Math.floor(Math.random() * 120) - 60;
+          spreadY = Math.floor(Math.random() * 100) + 150;
+        }
+
+        const cardDiv = document.createElement("div");
+        cardDiv.className = "chat-container";
+        cardDiv.style.setProperty("--spread-x", `${spreadX}px`);
+        cardDiv.style.setProperty("--spread-y", `${spreadY}px`);
+        cardDiv.style.setProperty("--z-index", zIndex);
+        cardDiv.style.animationDelay = `${i * 0.05}s`;
+
+        cardDiv.innerHTML = `
+          <div class="chat-card" style="background: ${color}">
+            <div class="chat-header">
+              
+              <span>王美花</span>
+            </div>
+            ${text}
+          </div>
+        `;
+
+        container.appendChild(cardDiv);
+      }, i * 50);
+    }
+  </script>
+</body>
+</html>
